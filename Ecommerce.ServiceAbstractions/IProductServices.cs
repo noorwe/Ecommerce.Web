@@ -1,4 +1,5 @@
-﻿using Ecommerce.Shared.DTOS.ProductDtos;
+﻿using Ecommerce.Shared;
+using Ecommerce.Shared.DTOS.ProductDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Ecommerce.ServiceAbstractions
 {
     public interface IProductServices
     {
-        Task<IEnumerable<ProductDto>> GetAllProductsAsync();
+        Task<PaginatedResult<ProductDto>> GetAllProductsAsync(ProductQueryParams queryParams);
 
         Task<ProductDto?> GetProductByIdAsync(int id);
 

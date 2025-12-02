@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Ecommerce.Domain.Contracts;
 using Ecommerce.Domain.Entities.ProductModule;
+using Ecommerce.Service.Specification;
 using Ecommerce.ServiceAbstractions;
+using Ecommerce.Shared;
 using Ecommerce.Shared.DTOS.ProductDtos;
 using System;
 using System.Collections.Generic;
@@ -30,10 +32,15 @@ namespace Ecommerce.Service
 
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+        public async Task<PaginatedResult<ProductDto>> GetAllProductsAsync(ProductQueryParams queryParams)
         {
-            var products = await _unitOfWork.GetRepository<Product, int>().GetAllAsync();
-            return _mapper.Map<IEnumerable<ProductDto>>(products);
+            var Spec = new ProductWithBrandAndTypeSpecification(queryParams);
+            var products = await _unitOfWork.GetRepository<Product, int>().GetAllAsync(Spec);
+            var DataToReturn = _mapper.Map<IEnumerable<ProductDto>>(products);
+            var CountOfReturnedData = DataToReturn.Count();
+            var CountSpec = new ProductCountSpecification(queryParams);
+            var CountOfProducts = await _unitOfWork.GetRepository<Product, int>().CountAsync(CountSpec);
+            return new PaginatedResult<ProductDto>(queryParams.PageIndex, CountOfReturnedData, CountOfProducts, DataToReturn );
         }
 
         public async Task<IEnumerable<TypeDto>> GetAllTypesAsync()
@@ -42,10 +49,11 @@ namespace Ecommerce.Service
             return _mapper.Map<IEnumerable<TypeDto>>(types);
         }
 
-        public Task<ProductDto?> GetProductByIdAsync(int id)
+        public async Task<ProductDto?> GetProductByIdAsync(int id)
         {
-            var product =  _unitOfWork.GetRepository<Product, int>().GetByIdAsync(id);
-            return _mapper.Map<Task<ProductDto?>>(product);
+            var Spec = new ProductWithBrandAndTypeSpecification(id);
+            var product = await  _unitOfWork.GetRepository<Product, int>().GetByIdAsync(Spec);
+            return  _mapper.Map<ProductDto?>(product);
         }
     }
 }

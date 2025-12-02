@@ -28,11 +28,29 @@ namespace Ecommerce.Persistance.Repositories
         public async Task<IEnumerable<TEntity>> GetAllAsync()
                     => await _dbContext.Set<TEntity>().ToListAsync();
 
-        public async Task<TEntity?> GetByIdAsync(int id)
+        public async Task<TEntity?> GetByIdAsync(TKey id)
             => await _dbContext.Set<TEntity>().FindAsync(id);
         
 
         public void Update(TEntity entity)
             => _dbContext.Set<TEntity>().Update(entity);
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity, TKey> specification)
+        {
+            var query = SpecificationEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specification);
+            return await query.ToListAsync();
+        }
+
+        public async Task<TEntity?> GetByIdAsync(ISpecification<TEntity, TKey> specification)
+        {
+            return await SpecificationEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specification).FirstOrDefaultAsync();
+        }
+
+        public async Task<int> CountAsync(ISpecification<TEntity, TKey> specification)
+        {
+            return await SpecificationEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specification).CountAsync();
+            
+
+        }
     }
 }
