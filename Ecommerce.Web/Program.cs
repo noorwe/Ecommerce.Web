@@ -1,12 +1,17 @@
 
 using Ecommerce.Domain.Contracts;
+using Ecommerce.Persistance;
 using Ecommerce.Persistance.Data.DataSeed;
 using Ecommerce.Persistance.Data.DbContexts;
 using Ecommerce.Persistance.Repositories;
 using Ecommerce.Service;
 using Ecommerce.Service.MappingProfiles;
 using Ecommerce.ServiceAbstractions;
+using Ecommerce.Shared.ErrorModels;
+using Ecommerce.Web.CustomMiddlewares;
 using Ecommerce.Web.Extensions;
+using Ecommerce.Web.Factories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -21,20 +26,17 @@ namespace Ecommerce.Web
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerServices();
 
-            builder.Services.AddDbContext<StoreDbContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-            builder.Services.AddScoped<IDataInitializer, DataInitializer>();
 
-            builder.Services.AddAutoMapper(X => X.AddProfile<ProductProfile>());
+            builder.Services.AddInfrastructureServices(builder.Configuration);
 
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<IProductServices, ProductService>();
+            builder.Services.AddApplicationServices();
+
+            builder.Services.AddWebAppServices();
+
+
+
 
 
             var app = builder.Build();
@@ -42,6 +44,12 @@ namespace Ecommerce.Web
             await app.MigrateDbAsync();
             await app.SeedDbAsync();
 
+
+            #region Configure the Http request pipeline with Custom Middleware
+
+            app.UseCustomExceptionMiddleware();
+
+            #endregion
 
 
             // Configure the HTTP request pipeline.
