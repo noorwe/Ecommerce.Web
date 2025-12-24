@@ -28,6 +28,7 @@ namespace Ecommerce.Web.Extensions
 
             var dataInitializer = scope.ServiceProvider.GetRequiredService<IDataInitializer>();
             await dataInitializer.InitializeAsync();
+            await dataInitializer.IdentityDataSeedAsync();
             
             return app;
         }

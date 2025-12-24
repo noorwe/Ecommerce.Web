@@ -15,6 +15,10 @@ namespace Ecommerce.Service
         {
             services.AddScoped<IProductServices, ProductService>();
             services.AddAutoMapper(X => X.AddProfile<ProductProfile>());
+
+            services.AddScoped<IBasketService, BasketService>();
+            services.AddAutoMapper(X => X.AddProfile<BasketProfile>());
+
             return services;
 
         }

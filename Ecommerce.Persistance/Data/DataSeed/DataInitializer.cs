@@ -1,7 +1,9 @@
 ﻿using Ecommerce.Domain.Contracts;
 using Ecommerce.Domain.Entities;
+using Ecommerce.Domain.Entities.IdentityModule;
 using Ecommerce.Domain.Entities.ProductModule;
 using Ecommerce.Persistance.Data.DbContexts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,11 +17,17 @@ namespace Ecommerce.Persistance.Data.DataSeed
     public class DataInitializer : IDataInitializer
     {
         private readonly StoreDbContext _dbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public DataInitializer(StoreDbContext dbContext)
+        public DataInitializer(StoreDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
+
+
 
         public async Task InitializeAsync()
         {
@@ -86,5 +94,54 @@ namespace Ecommerce.Persistance.Data.DataSeed
                 Console.WriteLine($"Error occured while seeding data from file: {fileName}");
             }
         }
-    }
+
+
+        public async Task IdentityDataSeedAsync()
+        {
+            try
+            {
+                if (!_roleManager.Roles.Any())
+                {
+                    var roles = new List<IdentityRole>
+                {
+                    new IdentityRole("Admin"),
+                    new IdentityRole("SuperAdmin")
+                };
+                    foreach (var role in roles)
+                    {
+                        await _roleManager.CreateAsync(role);
+                    }
+                }
+                if (!_userManager.Users.Any())
+                {
+                    var admin = new ApplicationUser()
+                    {
+                        DisplayName = "Nour",
+                        Email = "Nour@gmail.com",
+                        PhoneNumber = "01012345678",
+                        UserName = "Nour",
+
+                    };
+                    var superAdmin = new ApplicationUser()
+                    {
+                        DisplayName = "Ahmed",
+                        Email = "Ahmed@gmail.com",
+                        PhoneNumber = "01087654321",
+                        UserName = "Ahmed",
+                    };
+                    await _userManager.CreateAsync(admin, "P@ssw0rd");
+                    await _userManager.CreateAsync(superAdmin, "P@ssw0rd");
+
+                    await _userManager.AddToRoleAsync(admin, "Admin");
+                    await _userManager.AddToRoleAsync(superAdmin, "SuperAdmin");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred during identity data initialization: {ex.Message}");
+
+            }
+        }
+    }    
 }

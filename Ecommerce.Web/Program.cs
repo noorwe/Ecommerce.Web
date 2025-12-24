@@ -1,8 +1,10 @@
 
 using Ecommerce.Domain.Contracts;
+using Ecommerce.Domain.Entities.IdentityModule;
 using Ecommerce.Persistance;
 using Ecommerce.Persistance.Data.DataSeed;
 using Ecommerce.Persistance.Data.DbContexts;
+using Ecommerce.Persistance.Data.Identity;
 using Ecommerce.Persistance.Repositories;
 using Ecommerce.Service;
 using Ecommerce.Service.MappingProfiles;
@@ -11,6 +13,7 @@ using Ecommerce.Shared.ErrorModels;
 using Ecommerce.Web.CustomMiddlewares;
 using Ecommerce.Web.Extensions;
 using Ecommerce.Web.Factories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -28,13 +31,16 @@ namespace Ecommerce.Web
             builder.Services.AddControllers();
             builder.Services.AddSwaggerServices();
 
-
+           
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
             builder.Services.AddApplicationServices();
 
-            builder.Services.AddWebAppServices();
+            builder.Services.AddScoped<IServiceManager, ServiceManager>();
 
+
+            builder.Services.AddWebAppServices();
+ 
 
 
 

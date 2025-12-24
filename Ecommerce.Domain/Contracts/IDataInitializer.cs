@@ -9,5 +9,7 @@ namespace Ecommerce.Domain.Contracts
     public interface IDataInitializer
     {
         Task InitializeAsync();
+
+        Task IdentityDataSeedAsync();
     }
 }

@@ -14,18 +14,18 @@ namespace Ecommerce.Presentation.Controllers
     [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
-        private readonly IProductServices _productServices;
+        private readonly IServiceManager _serviceManager;
 
-        public ProductController(IProductServices productServices)
+        public ProductController(IServiceManager serviceManager)
         {
-            _productServices = productServices;
+            _serviceManager = serviceManager;
         }
 
         #region Get All Products
         [HttpGet]
         public async Task<ActionResult<PaginatedResult<ProductDto>>> GetAllProducts([FromQuery] ProductQueryParams queryParams)
         {
-            var products = await _productServices.GetAllProductsAsync(queryParams);
+            var products = await _serviceManager.ProductServices.GetAllProductsAsync(queryParams);
             return Ok(products);
         }
 
@@ -36,7 +36,7 @@ namespace Ecommerce.Presentation.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDto>> GetProductById(int id)
         {
-            var product = await _productServices.GetProductByIdAsync(id);
+            var product = await _serviceManager.ProductServices.GetProductByIdAsync(id);
             if (product == null)
             {
                 return NotFound();
@@ -51,7 +51,7 @@ namespace Ecommerce.Presentation.Controllers
         [HttpGet("brands")]
         public async Task<ActionResult<IEnumerable<BrandDto>>> GetAllBrands()
         {
-            var brands = await _productServices.GetAllBrandsAsync();
+            var brands = await _serviceManager.ProductServices.GetAllBrandsAsync();
             return Ok(brands);
         }
         #endregion
@@ -60,7 +60,7 @@ namespace Ecommerce.Presentation.Controllers
         [HttpGet("types")]
         public async Task<ActionResult<IEnumerable<TypeDto>>> GetAllTypes()
         {
-            var types = await _productServices.GetAllTypesAsync();
+            var types = await _serviceManager.ProductServices.GetAllTypesAsync();
             return Ok(types);
         }
         #endregion
