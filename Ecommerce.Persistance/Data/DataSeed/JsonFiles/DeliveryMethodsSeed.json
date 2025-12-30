@@ -1,0 +1,26 @@
+[
+  {
+    "shortName": "Standard",
+    "description": "Standard delivery within the city",
+    "deliveryTime": "3-5 Business Days",
+    "price": 50.0
+  },
+  {
+    "shortName": "Express",
+    "description": "Fast delivery for urgent orders",
+    "deliveryTime": "1-2 Business Days",
+    "price": 100.0
+  },
+  {
+    "shortName": "SameDay",
+    "description": "Same day delivery inside city limits",
+    "deliveryTime": "Same Day",
+    "price": 150.0
+  },
+  {
+    "shortName": "International",
+    "description": "International shipping service",
+    "deliveryTime": "7-14 Business Days",
+    "price": 300.0
+  }
+]

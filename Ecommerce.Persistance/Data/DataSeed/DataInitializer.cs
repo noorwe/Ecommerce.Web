@@ -2,6 +2,7 @@
 using Ecommerce.Domain.Entities;
 using Ecommerce.Domain.Entities.IdentityModule;
 using Ecommerce.Domain.Entities.ProductModule;
+using Ecommerce.Domain.OrderModule;
 using Ecommerce.Persistance.Data.DbContexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -36,33 +37,53 @@ namespace Ecommerce.Persistance.Data.DataSeed
                 var HasProducts = await _dbContext.Products.AnyAsync();
                 var HasBrands = await _dbContext.ProductBrands.AnyAsync();
                 var HasTypes = await _dbContext.ProductTypes.AnyAsync();
-                if (HasProducts && HasBrands && HasTypes) return;
+                var HasDeliveryMethods = await _dbContext.Set<DeliveryMethod>().AnyAsync();
 
+                if (HasProducts && HasBrands && HasTypes && HasDeliveryMethods)
+                    return;
 
                 if (!HasBrands)
                 {
-                    await SeedDataFromJsonAsync<ProductBrand, int>("brands.json", _dbContext.ProductBrands);
+                    await SeedDataFromJsonAsync<ProductBrand, int>(
+                        "brands.json",
+                        _dbContext.ProductBrands
+                    );
                 }
 
                 if (!HasTypes)
                 {
-                    await SeedDataFromJsonAsync<ProductType, int>("types.json", _dbContext.ProductTypes);
+                    await SeedDataFromJsonAsync<ProductType, int>(
+                        "types.json",
+                        _dbContext.ProductTypes
+                    );
                 }
+
+                if (!HasDeliveryMethods)
+                {
+                    await SeedDataFromJsonAsync<DeliveryMethod, int>(
+                        "DeliveryMethodsSeed.json",
+                        _dbContext.Set<DeliveryMethod>()
+                    );
+                }
+
                 _dbContext.SaveChanges();
 
                 if (!HasProducts)
                 {
-                    await SeedDataFromJsonAsync<Product, int>("products.json", _dbContext.Products);
+                    await SeedDataFromJsonAsync<Product, int>(
+                        "products.json",
+                        _dbContext.Products
+                    );
                 }
-                _dbContext.SaveChanges();
 
+                _dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred during data initialization: {ex.Message}");
-
             }
         }
+
 
 
         private async Task SeedDataFromJsonAsync<T, TKey>(string fileName, DbSet<T> dbSet) where T : BaseEntity<TKey>

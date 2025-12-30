@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Domain.Entities.BasketModule
+namespace Ecommerce.Shared.DTOS.OrderDtos
 {
-    public class BasketItem
+    public class OrderItemDto
     {
-        public int Id { get; set; }
         public string ProductName { get; set; } = null!;
 
         public string PictureUrl { get; set; } = null!;

@@ -1,6 +1,9 @@
 ﻿using Ecommerce.Web.CustomMiddlewares;
 using Ecommerce.Web.Factories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Ecommerce.Web.Extensions
 {
@@ -24,6 +27,30 @@ namespace Ecommerce.Web.Extensions
             });
             return services;
         }
+
+
+        public static IServiceCollection AddJwtServices(this IServiceCollection services, IConfiguration _configuration)
+        {
+            services.AddAuthentication(config =>
+            {
+                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = _configuration.GetSection("JwtOptions")["Issuer"],
+                    ValidAudience = _configuration.GetSection("JwtOptions")["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JwtOptions")["SecretKey"])),
+                };
+            });
+            return services;
+        }
+
 
         public static IApplicationBuilder UseCustomExceptionMiddleware(this IApplicationBuilder app)
         {

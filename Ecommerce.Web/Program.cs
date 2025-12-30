@@ -40,7 +40,9 @@ namespace Ecommerce.Web
 
 
             builder.Services.AddWebAppServices();
- 
+
+            builder.Services.AddJwtServices(builder.Configuration);
+
 
 
 
@@ -66,6 +68,8 @@ namespace Ecommerce.Web
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
