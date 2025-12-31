@@ -1,4 +1,5 @@
-﻿using Ecommerce.ServiceAbstractions;
+﻿using Ecommerce.Presentation.Attributes;
+using Ecommerce.ServiceAbstractions;
 using Ecommerce.Shared;
 using Ecommerce.Shared.DTOS.ProductDtos;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +25,7 @@ namespace Ecommerce.Presentation.Controllers
         }
 
         #region Get All Products
+        [CacheAttribute]
         [HttpGet]
         public async Task<ActionResult<PaginatedResult<ProductDto>>> GetAllProducts([FromQuery] ProductQueryParams queryParams)
         {

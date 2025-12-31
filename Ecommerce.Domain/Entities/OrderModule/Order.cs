@@ -14,7 +14,7 @@ namespace Ecommerce.Domain.OrderModule
         {
             
         }
-        public Order(string userEmail, OrderAddress address, DeliveryMethod deliveryMethod, int deliveryMethodId, decimal subTotal, ICollection<OrderItem> items)
+        public Order(string userEmail, OrderAddress address, DeliveryMethod deliveryMethod, int deliveryMethodId, decimal subTotal, ICollection<OrderItem> items, string? paymentIntentId)
         {
             UserEmail = userEmail;
             Address = address;
@@ -22,6 +22,7 @@ namespace Ecommerce.Domain.OrderModule
             DeliveryMethodId = deliveryMethodId;
             SubTotal = subTotal;
             Items = items;
+            PaymentIntentId = paymentIntentId;
         }
 
         public string UserEmail { get; set; } = null!;
@@ -39,6 +40,8 @@ namespace Ecommerce.Domain.OrderModule
 
         [NotMapped]
         public decimal Total { get => SubTotal + DeliveryMethod.Price; }
+
+        public string? PaymentIntentId { get; set; }
 
     }
 }

@@ -16,6 +16,7 @@ using Ecommerce.Web.Factories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Threading.Tasks;
 
 namespace Ecommerce.Web
@@ -36,7 +37,7 @@ namespace Ecommerce.Web
 
             builder.Services.AddApplicationServices();
 
-            builder.Services.AddScoped<IServiceManager, ServiceManager>();
+            
 
 
             builder.Services.AddWebAppServices();
@@ -64,7 +65,18 @@ namespace Ecommerce.Web
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options => 
+                {
+                    options.ConfigObject = new ConfigObject()
+                    {
+                        DisplayRequestDuration = true,
+
+                    };
+                    options.DocumentTitle = "My Ecommerce API";
+                    options.DocExpansion(DocExpansion.None);
+                    options.EnableFilter();
+                    options.EnablePersistAuthorization();
+                });
             }
 
             app.UseHttpsRedirection();

@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Service
 {
-    public class ServiceManager(IUnitOfWork _unitOfWork, IMapper _mapper, IBasketRepository _basketRepository, UserManager<ApplicationUser> _userManager, IConfiguration _configuration ) : IServiceManager
+    public class ServiceManager(IUnitOfWork _unitOfWork, IMapper _mapper, IBasketRepository _basketRepository, UserManager<ApplicationUser> _userManager, IConfiguration _configuration ) 
+      //  : IServiceManager
     {
         private readonly Lazy<IProductServices> _lazyProductServices
             = new Lazy<IProductServices>(() => new ProductService(_unitOfWork, _mapper));

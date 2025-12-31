@@ -35,6 +35,18 @@ namespace Ecommerce.Service
             var basket = await _basketRepository.GetBasketAsync(orderDto.BasketId)
                 ?? throw new BasketNotFoundException(orderDto.BasketId);
 
+            ArgumentNullException.ThrowIfNull(basket.PaymentIntentId);
+
+            var orderRepo = _unitOfWork.GetRepository<Order, Guid>();
+
+            var existingOrder = await orderRepo.GetByIdAsync(
+                new OrderWithPaymentIntentIdSpecification(basket.PaymentIntentId)
+            );
+            if (existingOrder is not null)
+            {
+                orderRepo.Remove(existingOrder);
+            }
+
             // Create Order Items
             var orderItems = new List<OrderItem>();
             var productRepo = _unitOfWork.GetRepository<Product, int>();
@@ -75,11 +87,12 @@ namespace Ecommerce.Service
                 deliveryMethod,
                 deliveryMethod.Id,
                 subtotal,
-                orderItems
+                orderItems,
+                basket.PaymentIntentId
 
             );
 
-            await _unitOfWork.GetRepository<Order, Guid>().AddAsync(order);
+            await orderRepo.AddAsync(order);
             await _unitOfWork.SaveChangesAsync();
 
             // Map To DTO & Return

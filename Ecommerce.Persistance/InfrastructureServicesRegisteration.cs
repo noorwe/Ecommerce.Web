@@ -41,6 +41,9 @@ namespace Ecommerce.Persistance
 
             services.AddScoped<IBasketRepository, BasketRepository>();
 
+            services.AddScoped<ICacheRepository, CacheRepository>();
+
+
             services.AddSingleton<IConnectionMultiplexer>((_) =>
             {
                 
